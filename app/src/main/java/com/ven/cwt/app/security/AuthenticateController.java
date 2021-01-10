@@ -53,11 +53,12 @@ public class AuthenticateController {
 	@PostMapping(value = "/redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void login(HttpServletResponse httpServletResponse, UserAuth auth) throws IOException {
 
-		boolean inDatabase = authService.validateSession(auth.getUser(), auth.getPass());
+		LOGGER.info("email: {} - pass: {}" , auth.getEmail(), auth.getPassword());
+		boolean inDatabase = authService.validateSession(auth.getEmail(), auth.getPassword());
 		if (inDatabase) {
-			String jwt = jwtService.createJWT(auth.getUser());
+			String jwt = jwtService.createJWT(auth.getEmail());
 			Cookie cookie = new Cookie(KEY_COOKIE, jwt);
-			cookie.setHttpOnly(true);
+			cookie.setHttpOnly(false);
 			cookie.setDomain(DOMAIN);
 			cookie.setMaxAge(60 * 60);
 			cookie.setPath(PATH);
